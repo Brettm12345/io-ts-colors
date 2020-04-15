@@ -1,4 +1,6 @@
 {
-  "editor.semanticHighlighting.enabled": true,
-  "cSpell.words": ["HSLA"]
+  "cSpell.words": ["HSLA"],
+  "jest.autoEnable": false,
+  "jestTestExplorer.pathToJest": "yarn test",
+  "daddy-jest.jestPath": "yarn test"
 }
