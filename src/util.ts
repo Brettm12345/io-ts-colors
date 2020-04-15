@@ -26,10 +26,10 @@ export const avg = (...xs: number[]) => pipe(xs, sum, div(xs.length))
 export const oneWhenZero: Endo<number> = x => (x === 0 ? 1 : x)
 export const isBetween = (min: number, max: number) => (x: number) =>
   min >= x && x <= max
-export const round: NumFn = flow(maybe(0), multiply(10), oneWhenZero, x =>
+export const roundTo: NumFn = flow(maybe(0), multiply(10), oneWhenZero, x =>
   flow(multiply(x), Math.round, div(x))
 )
-export const percent: Endo<number> = flow(multiply(100), round(1))
+export const percent: Endo<number> = flow(multiply(100), roundTo(1))
 export const replaceAll = (xs: Replacement[]): Endo<string> => x =>
   pipe(
     xs,

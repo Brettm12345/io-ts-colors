@@ -7,6 +7,9 @@ import * as t from 'io-ts'
 import {flow, FunctionN as FN} from 'fp-ts/lib/function'
 import {percent, avg, isBetween, replaceAll, deltaMax} from './util'
 
+const {values, keys} = Object
+const {round} = Math
+
 export type RGB = Record<'r' | 'g' | 'b', number>
 export type HSL = Record<'h' | 's' | 'l', number>
 
@@ -30,16 +33,13 @@ const hexDigit = replaceAll(
 export const HexString = new t.Type<RGB, string, unknown>(
   'HexString',
   (x): x is RGB =>
-    A.foldMap(monoidAll)(isBetween(0, 255))(Object.values(x)) &&
-    Object.keys(x) === ['r', 'g', 'b'],
+    A.foldMap(monoidAll)(isBetween(0, 255))(values(x)) &&
+    keys(x) === ['r', 'g', 'b'],
   (u, c) =>
     pipe(
       either.chain(t.string.validate(u, c), s =>
         pipe(
-          s
-            .replace(/^#/, '')
-            .split('')
-            .reverse(),
+          s.replace(/^#/, '').split('').reverse(),
           s => (s.length === 3 ? s.concat(s) : s), // handle shorthand colors IE: #fff
           A.chunksOf(2),
           A.map(
@@ -63,18 +63,13 @@ export const rgbToHsl = ({r, g, b}: RGB): HSL => {
   const tuple = [r, g, b]
   const [max, min] = ['max', 'min'].map(k => Math[k](...tuple) / 255)
   const delta = max - min
+  if (delta === 0) return {h: 0, s: 0, l: max} // The color is grayscale
   const sum = max + min
-  if (delta === 0)
-    return {
-      h: 0,
-      s: 0,
-      l: max,
-    }
   const l = percent(avg(max, min))
   const maxIndex = tuple.indexOf(max * 255)
   const d = deltaMax(tuple)
   return {
-    h: Math.round((60 * (2 * maxIndex + (d(1) - d(2)) / (delta * 255))) % 360),
+    h: round((60 * (2 * maxIndex + (d(1) - d(2)) / (delta * 255))) % 360),
     s: percent(delta / (l > 50 ? 2 - delta : sum)),
     l,
   }
