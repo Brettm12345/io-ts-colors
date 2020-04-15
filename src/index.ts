@@ -6,17 +6,7 @@ import { pipe } from "fp-ts/lib/pipeable";
 import * as t from "io-ts";
 import { replaceAll, intToString } from "./strings";
 import { flow } from "fp-ts/lib/function";
-import {
-  div,
-  multiply,
-  add,
-  mod,
-  avg,
-  indexOf,
-  percentage,
-  debug,
-  deg,
-} from "./util";
+import { div, multiply, add, mod, avg, indexOf, percentage, deg } from "./util";
 
 export type RGBA = Record<"r" | "g" | "b" | "a", number>;
 export type HSLA = Record<"h" | "s" | "l" | "a", number>;
@@ -101,7 +91,6 @@ export const rgbToHsl = (rgb: RGBA): HSLA => {
   const s = percentage((max - min) / (l <= 50 ? max + min : 2 - max - min));
   const h = pipe(
     maxIndex * 2 + (fromMax(1) - fromMax(2)) / dec(max - min),
-    debug(""),
     deg
   );
   return {
