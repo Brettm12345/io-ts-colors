@@ -1,10 +1,10 @@
 # Color-TS ![CI](https://github.com/Brettm12345/color-ts/workflows/CI/badge.svg)
 
-A purely functional color manipulation library for typescript
+A colection of [io-ts](https://github.com/gcanti/io-ts) _codecs_ for converting
+between colors
 
-## Todo
+## Features
 
-- [x] Parse RGB From string
-- [x] Branded `HexString` type using [io-ts](https://github.com/gcanti/io-ts)
-- [x] Convert rgb to hsl
-- [ ] Much more
+- [x] RGB from Hex
+- [x] HSL from RGB
+- [ ] RGB to HSL
