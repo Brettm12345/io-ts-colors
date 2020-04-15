@@ -7,14 +7,11 @@ const colors: Array<[string, RGBA, HSLA]> = [
   ["#191a2a", rgba(25, 26, 42), hsla(236, 25.4, 13.1)],
 ];
 
-test("Parse Rgb", () => {
-  colors.forEach(([hex, rgb]) => {
+colors.forEach(([hex, rgb, hsl]) => {
+  test(`Parse rgb from ${hex}`, () => {
     expect(HexString.decode(hex)).toEqual(right(rgb));
   });
-});
-
-test("Convert HSL", () => {
-  colors.forEach(([_, rgb, hsl]) => {
+  test(`Covert ${hex} to hsl`, () => {
     expect(rgbToHsl(rgb)).toEqual(hsl);
   });
 });

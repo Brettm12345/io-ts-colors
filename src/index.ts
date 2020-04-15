@@ -6,7 +6,16 @@ import { pipe } from "fp-ts/lib/pipeable";
 import * as t from "io-ts";
 import { replaceAll, intToString } from "./strings";
 import { flow } from "fp-ts/lib/function";
-import { div, multiply, add, mod, avg, indexOf, percentage, deg } from "./util";
+import {
+  div,
+  multiply,
+  add,
+  mod,
+  avg,
+  indexOf,
+  percentage,
+  round,
+} from "./util";
 
 export type RGBA = Record<"r" | "g" | "b" | "a", number>;
 export type HSLA = Record<"h" | "s" | "l" | "a", number>;
@@ -72,11 +81,10 @@ export const HexString = new t.Type<RGBA, string, unknown>(
 
 export const rgbToHsl = (rgb: RGBA): HSLA => {
   const { r, g, b, a } = rgb;
-  const values = [r, g, b];
-  const dec = multiply(255);
+  const tuple = [r, g, b];
   const [max, min] = pipe(
     ["max", "min"],
-    A.map((k) => pipe(Math[k](...values), div(255)))
+    A.map((k) => pipe(Math[k](...tuple), div(255)))
   );
   if (max === min)
     return {
@@ -85,13 +93,21 @@ export const rgbToHsl = (rgb: RGBA): HSLA => {
       l: max,
       a,
     };
-  const maxIndex = pipe(max, dec, indexOf(values));
-  const fromMax = flow(add(maxIndex), mod(3), (x) => values[x]);
-  const l = percentage(avg(max, min));
-  const s = percentage((max - min) / (l <= 50 ? max + min : 2 - max - min));
+  const maxIndex = pipe(max, multiply(255), indexOf(tuple));
+  const fromMax = flow(add(maxIndex), mod(3), (x) => tuple[x]);
+  const l = pipe(avg(max, min), percentage);
+  const s = pipe(
+    max - min,
+    div(l <= 50 ? max + min : 2 - max - min),
+    percentage
+  );
   const h = pipe(
-    maxIndex * 2 + (fromMax(1) - fromMax(2)) / dec(max - min),
-    deg
+    maxIndex,
+    multiply(2),
+    add(pipe(fromMax(1) - fromMax(2), pipe(max - min, multiply(255), div))),
+    multiply(60),
+    mod(360),
+    round(0)
   );
   return {
     h,

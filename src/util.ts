@@ -25,6 +25,5 @@ export const avg = (...xs: number[]) => pipe(xs, sum, div(xs.length));
 export const round: NumberFunc = flow(maybe(0), multiply(10), oneIfZero, (x) =>
   flow(multiply(x), Math.round, div(x))
 );
-export const deg: Endomorphism<number> = flow(multiply(60), mod(360), round(0));
 export const percentage: Endomorphism<number> = flow(multiply(100), round(1));
 export const indexOf = <A>(xs: A[]) => (x: A) => xs.indexOf(x);
