@@ -1,14 +1,14 @@
 import * as A from 'fp-ts/lib/Array'
+import {Either} from 'fp-ts/lib/Either'
 import {
   constant,
   Endomorphism as Endo,
-  FunctionN as FN,
   flow,
+  FunctionN as FN,
 } from 'fp-ts/lib/function'
 import * as O from 'fp-ts/lib/Option'
 import {pipe} from 'fp-ts/lib/pipeable'
 import {semigroupSum} from 'fp-ts/lib/Semigroup'
-import {Either} from 'fp-ts/lib/Either'
 import * as t from 'io-ts'
 
 const {round, max} = Math

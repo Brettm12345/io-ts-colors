@@ -1,15 +1,15 @@
-import * as t from 'io-ts'
 import * as A from 'fp-ts/lib/Array'
-import * as E from 'fp-ts/lib/Either'
-import {pipe} from 'fp-ts/lib/pipeable'
-import {NumberFromString} from 'io-ts-types/lib/NumberFromString'
-import {either} from 'fp-ts/lib/Either'
 import {array} from 'fp-ts/lib/Array'
+import * as E from 'fp-ts/lib/Either'
+import {either} from 'fp-ts/lib/Either'
 import {flow} from 'fp-ts/lib/function'
-import {monoidSum, monoidString} from 'fp-ts/lib/Monoid'
-import {replaceAll, Decoder} from './util'
+import {monoidString, monoidSum} from 'fp-ts/lib/Monoid'
+import {pipe} from 'fp-ts/lib/pipeable'
 import {fold} from 'fp-ts/lib/Semigroup'
+import * as t from 'io-ts'
+import {NumberFromString} from 'io-ts-types/lib/NumberFromString'
 import {EightBit} from './units'
+import {Decoder, replaceAll} from './util'
 
 export const HexDigit = new t.Type<number, string>(
   'HexDigit',

@@ -1,11 +1,11 @@
 import {Do} from 'fp-ts-contrib/lib/Do'
-import {either, Either} from 'fp-ts/lib/Either'
-import {flow, FunctionN as FN, unsafeCoerce} from 'fp-ts/lib/function'
+import {either} from 'fp-ts/lib/Either'
+import {flow, unsafeCoerce} from 'fp-ts/lib/function'
 import {pipe} from 'fp-ts/lib/pipeable'
 import * as t from 'io-ts'
-import {EightBit, Percentage, Degree} from './units'
-import {avg, deltaMax, multiply, roundTo, Decoder} from './util'
 import {RGB} from './rgb'
+import {Degree, EightBit, Percentage} from './units'
+import {avg, Decoder, deltaMax, multiply, roundTo} from './util'
 
 const {round} = Math
 
