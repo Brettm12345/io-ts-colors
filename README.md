@@ -6,5 +6,6 @@ between colors
 ## Features
 
 - [x] RGB from Hex
+- [x] RGB to Hex
 - [x] HSL from RGB
-- [ ] RGB to HSL
+- [ ] HSL to RGB

@@ -53,10 +53,14 @@ export type Decoder<T> = FN<unknown[], Parsed<T>>
 export const rgb: Decoder<RGB> = (r, g, b) => RGB.decode({r, g, b})
 export const hsl: Decoder<HSL> = (h, s, l) => HSL.decode({h, s, l})
 
-const hexDigit: Endo<string> = replaceAll(
+const parseHexDigit: Endo<string> = replaceAll(
   ['a', 'b', 'c', 'd', 'e', 'f'].map((a, i) => [a, (i + 10).toString()])
 )
+const encodeHexDigit = (x: number): string => (x === 0 ? '00' : x.toString(16))
 
+/**
+ * Converts #fff and #00ffff
+ */
 export const HexToRGB = new t.Type<RGB, string, unknown>(
   'HexToRGB',
   RGB.is,
@@ -70,7 +74,7 @@ export const HexToRGB = new t.Type<RGB, string, unknown>(
           A.map(
             flow(
               A.foldMapWithIndex(monoidSum)((i, a) =>
-                pipe(hexDigit(a), x => (i > 0 ? +x * (i * 16) : +x))
+                pipe(parseHexDigit(a), x => (i > 0 ? +x * (i * 16) : +x))
               ),
               EightBit.decode
             )
@@ -81,7 +85,7 @@ export const HexToRGB = new t.Type<RGB, string, unknown>(
         )
       )
     ),
-  String
+  ({r, g, b}) => '#' + [r, g, b].map(encodeHexDigit).join('')
 )
 const percent = flow(multiply(100), roundTo(1), Percentage.decode)
 export const RGBToHSL = new t.Type<HSL, RGB, unknown>(
