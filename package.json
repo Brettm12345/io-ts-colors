@@ -1,9 +1,9 @@
 {
-  "name": "color-ts",
+  "name": "io-ts-colors",
   "version": "1.0.0",
-  "description": "A curried, functional, tiny and type-safe color manipulation library.",
+  "description": "A collection of io-ts codecs for converting between colors",
   "main": "src/index.ts",
-  "repository": "https://github.com/brettm12345/color-ts",
+  "repository": "https://github.com/brettm12345/io-ts-colors",
   "author": "brettm12345 <brettmandler@gmail.com>",
   "license": "MIT",
   "scripts": {
