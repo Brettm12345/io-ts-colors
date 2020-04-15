@@ -1,14 +1,15 @@
-import * as A from 'fp-ts/lib/Array'
-import {array} from 'fp-ts/lib/Array'
-import * as E from 'fp-ts/lib/Either'
-import {either} from 'fp-ts/lib/Either'
-import {flow} from 'fp-ts/lib/function'
-import {monoidString, monoidSum} from 'fp-ts/lib/Monoid'
-import {pipe} from 'fp-ts/lib/pipeable'
-import {fold} from 'fp-ts/lib/Semigroup'
 import * as t from 'io-ts'
+import * as A from 'fp-ts/lib/Array'
+import * as E from 'fp-ts/lib/Either'
+import {pipe} from 'fp-ts/lib/pipeable'
 import {NumberFromString} from 'io-ts-types/lib/NumberFromString'
-import {Decoder, replaceAll} from './util'
+import {either} from 'fp-ts/lib/Either'
+import {array} from 'fp-ts/lib/Array'
+import {flow} from 'fp-ts/lib/function'
+import {monoidSum, monoidString} from 'fp-ts/lib/Monoid'
+import {replaceAll, Decoder} from './util'
+import {fold} from 'fp-ts/lib/Semigroup'
+import {EightBit} from './units'
 
 export const HexDigit = new t.Type<number, string>(
   'HexDigit',
@@ -25,15 +26,6 @@ export const HexDigit = new t.Type<number, string>(
     ),
   x => (x === 0 ? '00' : x.toString(16))
 )
-interface EightBitBrand {
-  readonly EightBit: unique symbol
-}
-const EightBit = t.brand(
-  t.number,
-  (n): n is t.Branded<number, EightBitBrand> => n >= 0 && n <= 255,
-  'EightBit'
-)
-export type EightBit = t.TypeOf<typeof EightBit>
 export const RGB = t.type({r: EightBit, g: EightBit, b: EightBit})
 export type RGB = t.TypeOf<typeof RGB>
 export const HexToRGB = new t.Type<RGB, string>(

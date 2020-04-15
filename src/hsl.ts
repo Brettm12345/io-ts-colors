@@ -3,34 +3,14 @@ import {either, Either} from 'fp-ts/lib/Either'
 import {flow, FunctionN as FN, unsafeCoerce} from 'fp-ts/lib/function'
 import {pipe} from 'fp-ts/lib/pipeable'
 import * as t from 'io-ts'
-import {avg, deltaMax, multiply, roundTo} from './util'
-import {RGB, EightBit} from './rgb'
+import {EightBit, Percentage, Degree} from './units'
+import {avg, deltaMax, multiply, roundTo, Decoder} from './util'
+import {RGB} from './rgb'
 
 const {round} = Math
-interface PercentageBrand {
-  readonly Percentage: unique symbol
-}
-const Percentage = t.brand(
-  t.number,
-  (n): n is t.Branded<number, PercentageBrand> => n >= 0 && n <= 100,
-  'Percentage'
-)
-type Percentage = t.TypeOf<typeof Percentage>
-
-interface DegreeBrand {
-  readonly Degree: unique symbol
-}
-const Degree = t.brand(
-  t.number,
-  (n): n is t.Branded<number, DegreeBrand> => n >= 0 && n <= 360,
-  'Degree'
-)
-type Degree = t.TypeOf<typeof Degree>
 
 const HSL = t.type({h: Degree, s: Percentage, l: Percentage})
 export type HSL = t.TypeOf<typeof HSL>
-export type Parsed<T> = Either<t.Errors, T>
-export type Decoder<T> = FN<unknown[], Parsed<T>>
 export const hsl: Decoder<HSL> = (h, s, l) => HSL.decode({h, s, l})
 const percent = flow(multiply(100), roundTo(1), Percentage.decode)
 export const HSLFromRGB = new t.Type<HSL, RGB, unknown>(
