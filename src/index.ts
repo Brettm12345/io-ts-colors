@@ -44,7 +44,7 @@ export const HexString = new t.Type<RGB, string, unknown>(
           ),
           A.reverse,
           A.array.sequence(either),
-          E.map(([r, g, b]) => ({r, g, b}))
+          E.map(([r, g, b]): RGB => ({r, g, b}))
         )
       )
     ),
