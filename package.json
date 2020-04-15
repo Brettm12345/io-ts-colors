@@ -1,0 +1,25 @@
+{
+  "name": "color-ts",
+  "version": "1.0.0",
+  "description": "A curried, functional, tiny and typesafe color manipulation library.",
+  "main": "index.ts",
+  "repository": "https://github.com/brettm12345/color-ts",
+  "author": "brettm12345 <brettmandler@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "test": "tsdx test",
+    "test:watch": "yarn test --watch",
+    "test:coverage": "yarn test --coverage"
+  },
+  "dependencies": {
+    "fp-ts": "^2.5.3",
+    "io-ts": "^2.1.3",
+    "io-ts-reporters": "^1.0.0",
+    "parser-ts": "^0.6.3",
+    "tsdx": "^0.13.2"
+  },
+  "devDependencies": {
+    "@types/jest": "^25.2.1",
+    "jest": "^25.3.0"
+  }
+}
