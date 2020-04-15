@@ -1,11 +1,20 @@
 import * as A from 'fp-ts/lib/Array'
-import {constant, Endomorphism as Endo, flow} from 'fp-ts/lib/function'
+import {
+  constant,
+  Endomorphism as Endo,
+  FunctionN as FN,
+  flow,
+} from 'fp-ts/lib/function'
 import * as O from 'fp-ts/lib/Option'
 import {pipe} from 'fp-ts/lib/pipeable'
 import {semigroupSum} from 'fp-ts/lib/Semigroup'
+import {Either} from 'fp-ts/lib/Either'
+import * as t from 'io-ts'
 
 const {round, max} = Math
 
+export type Parsed<T> = Either<t.Errors, T>
+export type Decoder<T> = FN<unknown[], Parsed<T>>
 type Search = string | RegExp
 type Replacement = [Search, string]
 type NumFn = (x: number) => Endo<number>
@@ -23,6 +32,7 @@ export const mod: NumFn = x => y => y % x
 export const sum = A.reduce(0, semigroupSum.concat)
 export const avg = (...xs: number[]) => pipe(xs, sum, div(xs.length))
 export const oneWhenZero: Endo<number> = x => (x === 0 ? 1 : x)
+export const indexed = <A>(xs: A[]) => xs.map((x, i) => [i, x])
 
 export const isBetween = (min: number, max: number) => (x: number) =>
   min >= x && x <= max
