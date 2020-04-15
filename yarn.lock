@@ -2974,7 +2974,7 @@ form-data@~2.3.2:
     combined-stream "^1.0.6"
     mime-types "^2.1.12"
 
-fp-ts@^2.0.2, fp-ts@^2.5.3:
+fp-ts@^2.5.3:
   version "2.5.3"
   resolved "https://registry.yarnpkg.com/fp-ts/-/fp-ts-2.5.3.tgz#7f09cc7f3e09623c6ade303d98a2cccdb2cc861f"
   integrity sha512-lQd+hahLd8cygNoXbEHDjH/cbF6XVWlEPb8h5GXXlozjCSDxWgclvkpOoTRfBA0P+r69l9VvW1nEsSGIJRQpWw==
@@ -3323,15 +3323,7 @@ invariant@^2.2.2, invariant@^2.2.4:
   dependencies:
     loose-envify "^1.0.0"
 
-io-ts-reporters@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/io-ts-reporters/-/io-ts-reporters-1.0.0.tgz#c5901d49d454956698bbca48b328698f8ca1c9c7"
-  integrity sha512-jjMvTnFYYxX3ue3cajmqCAf7sM4+lFvaaUuAL+otJv2DE+WDxYvQeCcUYveoq37rVSftJHZBEOrnvz3x0VdRXA==
-  dependencies:
-    fp-ts "^2.0.2"
-    io-ts "^2.0.0"
-
-io-ts@^2.0.0, io-ts@^2.1.3:
+io-ts@^2.1.3:
   version "2.1.3"
   resolved "https://registry.yarnpkg.com/io-ts/-/io-ts-2.1.3.tgz#02c03c375d14079496f0c046ef8a9aad4fbaeb74"
   integrity sha512-QFMR2QEBSP6w1TPmkpfca6xkzBbXO+K7ubdbV26GlCGI7CP9LV59bfty422JYtWgbBITuL/zBb1+mziv9f5Wfg==
@@ -5202,13 +5194,6 @@ parse5@5.1.0:
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/parse5/-/parse5-5.1.0.tgz#c59341c9723f414c452975564c7c00a68d58acd2"
   integrity sha512-fxNG2sQjHvlVAYmzBZS9YlDp6PTSSDwa98vkD4QgVDDCAo84z5X1t5XyJQ62ImdLXx5NdIIfihey6xpum9/gRQ==
-
-parser-ts@^0.6.3:
-  version "0.6.3"
-  resolved "https://registry.yarnpkg.com/parser-ts/-/parser-ts-0.6.3.tgz#46519ed7cbd536586d4e26b27f357d6eb249cf9c"
-  integrity sha512-7Bkmj+F7RSJsQUTMC43xUUGrASwxcb9RxAXKNdc10QFXQBtiMFuqgUXea3Fi9pVgMnNLSDRXhPKZh2XD5Us0jw==
-  dependencies:
-    "@babel/code-frame" "^7.0.0"
 
 pascal-case@^2.0.1:
   version "2.0.1"
