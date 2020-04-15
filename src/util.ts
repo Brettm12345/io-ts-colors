@@ -1,8 +1,10 @@
-import {Endomorphism as Endo, flow, constant} from 'fp-ts/lib/function'
 import * as A from 'fp-ts/lib/Array'
+import {constant, Endomorphism as Endo, flow} from 'fp-ts/lib/function'
 import * as O from 'fp-ts/lib/Option'
 import {pipe} from 'fp-ts/lib/pipeable'
 import {semigroupSum} from 'fp-ts/lib/Semigroup'
+
+const {round, max} = Math
 
 type Search = string | RegExp
 type Replacement = [Search, string]
@@ -26,9 +28,10 @@ export const isBetween = (min: number, max: number) => (x: number) =>
   min >= x && x <= max
 
 export const roundTo: NumFn = flow(maybe(0), multiply(10), oneWhenZero, x =>
-  flow(multiply(x), Math.round, div(x))
+  flow(multiply(x), round, div(x))
 )
 
+export const between0and1: Endo<number> = flow(Math.abs, x => x - round(x))
 export const percent: Endo<number> = flow(multiply(100), roundTo(1))
 
 /**
@@ -36,7 +39,7 @@ export const percent: Endo<number> = flow(multiply(100), roundTo(1))
  * Cycling back to the first value after reaching the end.
  */
 export const deltaMax = (xs: number[]) => (n: number): number =>
-  xs[(xs.indexOf(Math.max(...xs)) + n) % xs.length]
+  xs[(xs.indexOf(max(...xs)) + n) % xs.length]
 
 export const replaceAll = (xs: Replacement[]): Endo<string> => x =>
   pipe(

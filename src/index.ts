@@ -1,32 +1,65 @@
+import {Do} from 'fp-ts-contrib/lib/Do'
 import * as A from 'fp-ts/lib/Array'
 import * as E from 'fp-ts/lib/Either'
-import {either} from 'fp-ts/lib/Either'
-import {monoidAll, monoidSum} from 'fp-ts/lib/Monoid'
+import {either, Either} from 'fp-ts/lib/Either'
+import {
+  Endomorphism as Endo,
+  flow,
+  FunctionN as FN,
+  unsafeCoerce,
+} from 'fp-ts/lib/function'
+import {monoidSum} from 'fp-ts/lib/Monoid'
 import {pipe} from 'fp-ts/lib/pipeable'
 import * as t from 'io-ts'
-import {flow, Endomorphism as Endo, FunctionN as FN} from 'fp-ts/lib/function'
-import {percent, avg, isBetween, replaceAll, deltaMax} from './util'
+import {avg, deltaMax, multiply, replaceAll, roundTo} from './util'
 
-const {values, keys} = Object
 const {round} = Math
 
-export type RGB = Record<'r' | 'g' | 'b', number>
-export type HSL = Record<'h' | 's' | 'l', number>
+interface PercentageBrand {
+  readonly Percentage: unique symbol
+}
+const Percentage = t.brand(
+  t.number,
+  (n): n is t.Branded<number, PercentageBrand> => n >= 0 && n <= 100,
+  'Percentage'
+)
+type Percentage = t.TypeOf<typeof Percentage>
 
-type MKColor<T> = FN<[number, number, number], T>
+interface DegreeBrand {
+  readonly Degree: unique symbol
+}
+const Degree = t.brand(
+  t.number,
+  (n): n is t.Branded<number, DegreeBrand> => n >= 0 && n <= 360,
+  'Degree'
+)
+type Degree = t.TypeOf<typeof Degree>
 
-export const rgb: MKColor<RGB> = (r, g, b) => ({r, g, b})
-export const hsl: MKColor<HSL> = (h, s, l) => ({h, s, l})
+interface EightBitBrand {
+  readonly EightBit: unique symbol
+}
+const EightBit = t.brand(
+  t.number,
+  (n): n is t.Branded<number, EightBitBrand> => n >= 0 && n <= 255,
+  'EightBit'
+)
+type EightBit = t.TypeOf<typeof EightBit>
+const RGB = t.type({r: EightBit, g: EightBit, b: EightBit})
+const HSL = t.type({h: Degree, s: Percentage, l: Percentage})
+export type RGB = t.TypeOf<typeof RGB>
+export type HSL = t.TypeOf<typeof HSL>
+export type Parsed<T> = Either<t.Errors, T>
+export type Decoder<T> = FN<unknown[], Parsed<T>>
+export const rgb: Decoder<RGB> = (r, g, b) => RGB.decode({r, g, b})
+export const hsl: Decoder<HSL> = (h, s, l) => HSL.decode({h, s, l})
 
 const hexDigit: Endo<string> = replaceAll(
   ['a', 'b', 'c', 'd', 'e', 'f'].map((a, i) => [a, (i + 10).toString()])
 )
 
-export const HexString = new t.Type<RGB, string, unknown>(
-  'HexString',
-  (x): x is RGB =>
-    A.foldMap(monoidAll)(isBetween(0, 255))(values(x)) &&
-    keys(x) === ['r', 'g', 'b'],
+export const HexToRGB = new t.Type<RGB, string, unknown>(
+  'HexToRGB',
+  RGB.is,
   (u, c) =>
     pipe(
       either.chain(t.string.validate(u, c), s =>
@@ -39,7 +72,7 @@ export const HexString = new t.Type<RGB, string, unknown>(
               A.foldMapWithIndex(monoidSum)((i, a) =>
                 pipe(hexDigit(a), x => (i > 0 ? +x * (i * 16) : +x))
               ),
-              t.number.decode
+              EightBit.decode
             )
           ),
           A.reverse,
@@ -50,19 +83,30 @@ export const HexString = new t.Type<RGB, string, unknown>(
     ),
   String
 )
-
-export const rgbToHsl = ({r, g, b}: RGB): HSL => {
-  const tuple = [r, g, b]
-  const [max, min] = ['max', 'min'].map(k => Math[k](...tuple) / 255)
-  const delta = max - min
-  if (delta === 0) return {h: 0, s: 0, l: max} // The color is grayscale
-  const sum = max + min
-  const l = percent(avg(max, min))
-  const maxIndex = tuple.indexOf(max * 255)
-  const d = deltaMax(tuple)
-  return {
-    h: round((60 * (2 * maxIndex + (d(1) - d(2)) / (delta * 255))) % 360),
-    s: percent(delta / (l > 50 ? 2 - delta : sum)),
-    l,
-  }
-}
+const percent = flow(multiply(100), roundTo(1), Percentage.decode)
+export const RGBToHSL = new t.Type<HSL, RGB, unknown>(
+  'RGBToHSL',
+  HSL.is,
+  (u, c) =>
+    pipe(
+      either.chain(RGB.validate(u, c), ({r, g, b}) => {
+        const tuple = [r, g, b]
+        const [max, min] = ['max', 'min'].map(k => Math[k](...tuple) / 255)
+        const delta = max - min
+        if (delta === 0) return hsl(0, 0, max) // The color is grayscale
+        const sum = max + min
+        const maxIndex = tuple.indexOf((max * 255) as EightBit)
+        const d = deltaMax(tuple)
+        return Do(either)
+          .bindL('h', () =>
+            Degree.decode(
+              round((60 * (2 * maxIndex + (d(1) - d(2)) / (delta * 255))) % 360)
+            )
+          )
+          .bindL('l', () => percent(avg(max, min)))
+          .bindL('s', ({l}) => percent(delta / (l > 50 ? 2 - delta : sum)))
+          .done()
+      })
+    ),
+  unsafeCoerce // TODO: Convert RGB TO HSL
+)
