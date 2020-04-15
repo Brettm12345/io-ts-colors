@@ -6,7 +6,7 @@ import { pipe } from "fp-ts/lib/pipeable";
 import * as t from "io-ts";
 import { replaceAll, intToString } from "./strings";
 import { flow } from "fp-ts/lib/function";
-import { div, multiply, add, mod, percentage, round } from "./util";
+import { div, multiply, add, mod, percentage, round, avg } from "./util";
 
 export type RGBA = Record<"r" | "g" | "b" | "a", number>;
 export type HSLA = Record<"h" | "s" | "l" | "a", number>;
@@ -87,20 +87,13 @@ export const rgbToHsl = (rgb: RGBA): HSLA => {
       a,
     };
   const maxIndex = tuple.indexOf(max * 255);
-  const fromMax = flow(add(maxIndex), mod(3), (x) => tuple[x]);
-  const l = percentage(sum / 2);
-  const s = pipe(delta, div(l <= 50 ? sum : 2 - delta), percentage);
-  const h = pipe(
-    maxIndex,
-    multiply(2),
-    add((fromMax(1) - fromMax(2)) / (delta * 255)),
-    multiply(60),
-    mod(360),
-    round(0)
-  );
+  const fromMax = (x: number) => tuple[(maxIndex + x) % 3];
+  const l = percentage(avg(max, min));
   return {
-    h,
-    s,
+    h: Math.round(
+      ((maxIndex * 2 + (fromMax(1) - fromMax(2)) / (delta * 255)) * 60) % 360
+    ),
+    s: percentage(delta / (l <= 50 ? sum : 2 - delta)),
     l,
     a,
   };
