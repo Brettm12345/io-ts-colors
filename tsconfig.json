@@ -1,0 +1,6 @@
+{
+  "compilerOptions": {
+    "outDir": "dist",
+    "importHelpers": true
+  }
+}
