@@ -33,7 +33,7 @@ export const percent: Endo<number> = flow(multiply(100), roundTo(1))
 
 /**
  * Returns the value n places away from the maximum value in the array.
- * Cycles the array. IE: It returns to the first value
+ * Cycles the array. IE: It returns to the first value after reaching the end
  */
 export const deltaMax = (xs: number[]) => (n: number): number =>
   xs[(xs.indexOf(Math.max(...xs)) + n) % xs.length]
