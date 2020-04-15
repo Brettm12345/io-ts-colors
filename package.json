@@ -2,7 +2,7 @@
   "name": "color-ts",
   "version": "1.0.0",
   "description": "A curried, functional, tiny and typesafe color manipulation library.",
-  "main": "index.ts",
+  "main": "src/index.ts",
   "repository": "https://github.com/brettm12345/color-ts",
   "author": "brettm12345 <brettmandler@gmail.com>",
   "license": "MIT",
