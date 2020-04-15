@@ -1,4 +1,4 @@
-# Color-TS
+# Color-TS ![CI](https://github.com/Brettm12345/color-ts/workflows/CI/badge.svg)
 
 A purely functional color manipulation library for typescript
 
