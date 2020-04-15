@@ -4,9 +4,8 @@ import { either } from "fp-ts/lib/Either";
 import { monoidAll, monoidSum } from "fp-ts/lib/Monoid";
 import { pipe } from "fp-ts/lib/pipeable";
 import * as t from "io-ts";
-import { replaceAll, intToString } from "./strings";
 import { flow, FunctionN as FN } from "fp-ts/lib/function";
-import { percent, avg, isBetween } from "./util";
+import { percent, avg, isBetween, replaceAll } from "./util";
 
 export type RGB = Record<"r" | "g" | "b", number>;
 export type HSL = Record<"h" | "s" | "l", number>;
@@ -24,12 +23,8 @@ export const hsl: ColorBuilder<HSL> = (h, s, l): HSL => ({
   l,
 });
 
-const handleHex = pipe(
-  A.zip(
-    ["a", "b", "c", "d", "e", "f"],
-    pipe(A.range(10, 15), A.map(intToString))
-  ),
-  replaceAll
+const hexDigit = replaceAll(
+  ["a", "b", "c", "d", "e", "f"].map((a, i) => [a, (i + 10).toString()])
 );
 
 export const HexString = new t.Type<RGB, string, unknown>(
@@ -50,7 +45,7 @@ export const HexString = new t.Type<RGB, string, unknown>(
           A.map(
             flow(
               A.foldMapWithIndex(monoidSum)((i, a) =>
-                pipe(handleHex(a), (x) => (i > 0 ? +x * (i * 16) : +x))
+                pipe(hexDigit(a), (x) => (i > 0 ? +x * (i * 16) : +x))
               ),
               t.number.decode
             )
