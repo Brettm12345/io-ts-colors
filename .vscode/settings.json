@@ -1,5 +1,8 @@
 {
-  "cSpell.words": ["HSLA"],
+  "cSpell.words": [
+    "Endo",
+    "HSLA"
+  ],
   "jest.autoEnable": false,
   "jestTestExplorer.pathToJest": "yarn test",
   "daddy-jest.jestPath": "yarn test"
