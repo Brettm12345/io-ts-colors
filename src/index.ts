@@ -4,7 +4,7 @@ import {either} from 'fp-ts/lib/Either'
 import {monoidAll, monoidSum} from 'fp-ts/lib/Monoid'
 import {pipe} from 'fp-ts/lib/pipeable'
 import * as t from 'io-ts'
-import {flow, FunctionN as FN} from 'fp-ts/lib/function'
+import {flow, Endomorphism as Endo, FunctionN as FN} from 'fp-ts/lib/function'
 import {percent, avg, isBetween, replaceAll, deltaMax} from './util'
 
 const {values, keys} = Object
@@ -13,20 +13,12 @@ const {round} = Math
 export type RGB = Record<'r' | 'g' | 'b', number>
 export type HSL = Record<'h' | 's' | 'l', number>
 
-type ColorBuilder<T> = FN<[number, number, number], T>
-export const rgb: ColorBuilder<RGB> = (r, g, b) => ({
-  r,
-  g,
-  b,
-})
+type MKColor<T> = FN<[number, number, number], T>
 
-export const hsl: ColorBuilder<HSL> = (h, s, l): HSL => ({
-  h,
-  s,
-  l,
-})
+export const rgb: MKColor<RGB> = (r, g, b) => ({r, g, b})
+export const hsl: MKColor<HSL> = (h, s, l) => ({h, s, l})
 
-const hexDigit = replaceAll(
+const hexDigit: Endo<string> = replaceAll(
   ['a', 'b', 'c', 'd', 'e', 'f'].map((a, i) => [a, (i + 10).toString()])
 )
 
