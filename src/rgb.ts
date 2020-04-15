@@ -50,7 +50,6 @@ export const HexToRGB = new t.Type<RGB, string>(
               E.chain(x => EightBit.decode(fold(monoidSum)(0, x)))
             )
           ),
-
           array.sequence(either),
           E.map(flow(A.reverse, ([r, g, b]) => ({r, g, b})))
         )
