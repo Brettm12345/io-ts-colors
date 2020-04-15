@@ -1,17 +1,18 @@
 import { right } from "fp-ts/lib/Either";
-import { HexString, HSLA, hsla, rgba, RGBA, rgbToHsl } from "./index";
+import { HexString, HSL, hsl, rgb, RGB, rgbToHsl } from "./index";
 
-const colors: Array<[string, RGBA, HSLA]> = [
-  ["#ff0000", rgba(255, 0, 0), hsla(0, 100, 50)],
-  ["#00ffff", rgba(0, 255, 255), hsla(180, 100, 50)],
-  ["#191a2a", rgba(25, 26, 42), hsla(236, 25.4, 13.1)],
+const colors: Array<[string, RGB, HSL]> = [
+  ["#ff0000", rgb(255, 0, 0), hsl(0, 100, 50)],
+  ["#00ffff", rgb(0, 255, 255), hsl(180, 100, 50)],
+  ["#191a2a", rgb(25, 26, 42), hsl(236, 25.4, 13.1)],
+  ["#fff", rgb(255, 255, 255), hsl(0, 0, 1)],
 ];
 
-colors.forEach(([hex, rgb, hsl]) => {
-  test(`Parse rgb from ${hex}`, () => {
-    expect(HexString.decode(hex)).toEqual(right(rgb));
+colors.forEach(([hexString, expectedRGB, expectedHSL]) => {
+  test(`Parse rgb from ${hexString}`, () => {
+    expect(HexString.decode(hexString)).toEqual(right(expectedRGB));
   });
-  test(`Covert ${hex} to hsl`, () => {
-    expect(rgbToHsl(rgb)).toEqual(hsl);
+  test(`Covert ${hexString} to hsl`, () => {
+    expect(rgbToHsl(expectedRGB)).toEqual(expectedHSL);
   });
 });

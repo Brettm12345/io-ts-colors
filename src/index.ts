@@ -5,25 +5,25 @@ import { monoidAll, monoidSum } from "fp-ts/lib/Monoid";
 import { pipe } from "fp-ts/lib/pipeable";
 import * as t from "io-ts";
 import { replaceAll, intToString } from "./strings";
-import { flow } from "fp-ts/lib/function";
-import { div, multiply, add, mod, percentage, round, avg } from "./util";
+import { flow, FunctionN as FN } from "fp-ts/lib/function";
+import { percent, avg, isBetween } from "./util";
 
-export type RGBA = Record<"r" | "g" | "b" | "a", number>;
-export type HSLA = Record<"h" | "s" | "l" | "a", number>;
+export type RGB = Record<"r" | "g" | "b", number>;
+export type HSL = Record<"h" | "s" | "l", number>;
 
-export const rgba = (r: number, g: number, b: number, a: number = 1): RGBA => ({
+type ColorBuilder<T> = FN<[number, number, number], T>;
+export const rgb: ColorBuilder<RGB> = (r, g, b) => ({
   r,
   g,
   b,
-  a,
 });
 
-export const hsla = (h: number, s: number, l: number, a: number = 1): HSLA => ({
+export const hsl: ColorBuilder<HSL> = (h, s, l): HSL => ({
   h,
   s,
   l,
-  a,
 });
+
 const handleHex = pipe(
   A.zip(
     ["a", "b", "c", "d", "e", "f"],
@@ -32,17 +32,11 @@ const handleHex = pipe(
   replaceAll
 );
 
-export const HexString = new t.Type<RGBA, string, unknown>(
+export const HexString = new t.Type<RGB, string, unknown>(
   "HexString",
-  (x): x is RGBA => {
-    const baseKeys = ["r", "g", "b"];
-    const keys = Object.keys(x);
-    return (
-      keys === baseKeys ||
-      (keys === [...baseKeys, "a"] &&
-        A.foldMap(monoidAll)(t.number.is)(Object.values(x)))
-    );
-  },
+  (x): x is RGB =>
+    A.foldMap(monoidAll)(isBetween(0, 255))(Object.values(x)) &&
+    Object.keys(x) === ["r", "g", "b"],
   (u, c) =>
     pipe(
       either.chain(t.string.validate(u, c), (s) =>
@@ -51,7 +45,7 @@ export const HexString = new t.Type<RGBA, string, unknown>(
             .replace(/^#/, "")
             .split("")
             .reverse(),
-          (s) => (s.length === 3 ? s.concat(s) : s),
+          (s) => (s.length === 3 ? s.concat(s) : s), // handle shorthand colors IE: #fff
           A.chunksOf(2),
           A.map(
             flow(
@@ -61,22 +55,18 @@ export const HexString = new t.Type<RGBA, string, unknown>(
               t.number.decode
             )
           ),
-          (a) => a.reverse(),
+          A.reverse,
           A.array.sequence(either),
-          E.map(([r = 0, g = 0, b = 0, a = 255]) => ({ r, g, b, a: a / 255 }))
+          E.map(([r, g, b]) => ({ r, g, b }))
         )
       )
     ),
   String
 );
 
-export const rgbToHsl = (rgb: RGBA): HSLA => {
-  const { r, g, b, a } = rgb;
+export const rgbToHsl = ({ r, g, b }: RGB): HSL => {
   const tuple = [r, g, b];
-  const [max, min] = pipe(
-    ["max", "min"],
-    A.map((k) => pipe(Math[k](...tuple), div(255)))
-  );
+  const [max, min] = ["max", "min"].map((k) => Math[k](...tuple) / 255);
   const delta = max - min;
   const sum = max + min;
   if (delta === 0)
@@ -84,17 +74,15 @@ export const rgbToHsl = (rgb: RGBA): HSLA => {
       h: 0,
       s: 0,
       l: max,
-      a,
     };
   const maxIndex = tuple.indexOf(max * 255);
   const fromMax = (x: number) => tuple[(maxIndex + x) % 3];
-  const l = percentage(avg(max, min));
+  const l = percent(avg(max, min));
   return {
     h: Math.round(
-      ((maxIndex * 2 + (fromMax(1) - fromMax(2)) / (delta * 255)) * 60) % 360
+      (60 * (2 * maxIndex + (fromMax(1) - fromMax(2)) / (delta * 255))) % 360
     ),
-    s: percentage(delta / (l <= 50 ? sum : 2 - delta)),
+    s: percent(delta / (l > 50 ? 2 - delta : sum)),
     l,
-    a,
   };
 };

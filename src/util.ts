@@ -22,7 +22,9 @@ export const mod: NumberFunc = (x) => (y) => y % x;
 export const sum = A.reduce(0, semigroupSum.concat);
 export const avg = (...xs: number[]) => pipe(xs, sum, div(xs.length));
 export const oneIfZero: Endomorphism<number> = (x) => (x === 0 ? 1 : x);
+export const isBetween = (min: number, max: number) => (x: number) =>
+  min >= x && x <= max;
 export const round: NumberFunc = flow(maybe(0), multiply(10), oneIfZero, (x) =>
   flow(multiply(x), Math.round, div(x))
 );
-export const percentage: Endomorphism<number> = flow(multiply(100), round(1));
+export const percent: Endomorphism<number> = flow(multiply(100), round(1));
