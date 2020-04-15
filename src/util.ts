@@ -32,8 +32,8 @@ export const roundTo: NumFn = flow(maybe(0), multiply(10), oneWhenZero, x =>
 export const percent: Endo<number> = flow(multiply(100), roundTo(1))
 
 /**
- * Returns the value n places away from the maximum value in the array.
- * Cycles the array. IE: It returns to the first value after reaching the end
+ * Return the element `n` slots away from the maximum value in the array.
+ * Cycling back to the first value after reaching the end.
  */
 export const deltaMax = (xs: number[]) => (n: number): number =>
   xs[(xs.indexOf(Math.max(...xs)) + n) % xs.length]
