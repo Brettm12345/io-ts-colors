@@ -48,10 +48,7 @@ export const RGBFromHex = C.make<RGB>(
         )
       ),
       array.sequence(either),
-      E.bimap(
-        JSON.stringify,
-        flow(A.reverse, ([r, g, b]) => [r, g, b])
-      )
+      E.bimap(JSON.stringify, ([b, g, r]) => [r, g, b])
     )
   ),
   {
