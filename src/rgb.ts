@@ -7,7 +7,7 @@ import {pipe} from 'fp-ts/lib/pipeable'
 import * as C from 'io-ts/lib/Codec'
 import * as D from 'io-ts/lib/Decoder'
 import {Literal as _, match, Number} from 'runtypes'
-import {EightBit, NonEmptyString, IntFromString} from './io'
+import {EightBit, NonEmptyString, IntFromString, showError} from './io'
 import {base16, Builder, replaceAll, sum} from './util'
 
 export const HexDigit = C.make<number>(
@@ -18,7 +18,7 @@ export const HexDigit = C.make<number>(
         ['a', 'b', 'c', 'd', 'e', 'f'].map((a, i) => [a, (i + 10).toString()])
       ),
       IntFromString.decode,
-      E.mapLeft(constant('Failed to parse hex digit'))
+      showError
     )
   ),
   {

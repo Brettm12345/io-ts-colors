@@ -4,6 +4,8 @@ import * as E from 'fp-ts/lib/Either'
 import {not, constant, flow} from 'fp-ts/lib/function'
 import {multiply, div, roundTo, mod} from './util'
 
+export const showError = E.mapLeft(JSON.stringify)
+
 interface NonEmptyStringBrand {
   readonly NonEmpty: unique symbol
 }
@@ -63,12 +65,7 @@ export const Percentage = D.refinement(
 export const PercentFromNumber = C.make<Percentage>(
   D.parse(
     Positive,
-    flow(
-      multiply(100),
-      roundTo(1),
-      Percentage.decode,
-      E.mapLeft(JSON.stringify)
-    )
+    flow(multiply(100), roundTo(1), Percentage.decode, showError)
   ),
   {encode: div(100)}
 )
@@ -96,13 +93,7 @@ export const Degree = D.refinement(
 export const DegreeFromNumber = C.make<Degree>(
   D.parse(
     Positive,
-    flow(
-      multiply(60),
-      mod(360),
-      roundTo(0),
-      Degree.decode,
-      E.mapLeft(constant('Failed to parse degree'))
-    )
+    flow(multiply(60), mod(360), roundTo(0), Degree.decode, showError)
   ),
   {encode: div(360)}
 )

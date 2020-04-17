@@ -13,6 +13,7 @@ import {
   EightBitFromDecimal,
   Percentage,
   PercentFromNumber,
+  showError,
 } from './io'
 import {avg, Builder, deltaMax, indexFrom} from './util'
 
@@ -48,7 +49,7 @@ export const HSLFromRGB = C.make<HSL>(
           PercentFromNumber.decode(delta / (l > 50 ? 2 - delta : sum))
         )
         .return(({h, s, l}): HSL => [h, s, l])
-    }, E.mapLeft(constant('Failed to parse hsl')))
+    }, showError)
   ),
   {encode: unsafeCoerce} // TODO
 )
