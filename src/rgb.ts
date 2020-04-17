@@ -49,7 +49,7 @@ export const RGBFromHex = C.make<RGB>(
       ),
       array.sequence(either),
       E.bimap(
-        constant('Failed to parse hex digit'),
+        JSON.stringify,
         flow(A.reverse, ([r, g, b]) => [r, g, b])
       )
     )
