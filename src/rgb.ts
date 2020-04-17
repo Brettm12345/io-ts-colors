@@ -2,14 +2,16 @@ import * as A from 'fp-ts/lib/Array'
 import {array} from 'fp-ts/lib/Array'
 import * as E from 'fp-ts/lib/Either'
 import {either} from 'fp-ts/lib/Either'
-import {constant, flow} from 'fp-ts/lib/function'
+import {constant, flow, unsafeCoerce} from 'fp-ts/lib/function'
+import {monoidSum} from 'fp-ts/lib/Monoid'
 import {pipe} from 'fp-ts/lib/pipeable'
+import {fold} from 'fp-ts/lib/Semigroup'
 import * as C from 'io-ts/lib/Codec'
 import * as D from 'io-ts/lib/Decoder'
 import {Literal as _, match, Number} from 'runtypes'
 import {IntFromString} from './numbers'
 import {EightBit, NonEmptyString} from './units'
-import {base16, Builder, replaceAll, sum} from './util'
+import {Builder, base16, replaceAll, sum} from './util'
 
 export const HexDigit: C.Codec<number> = C.make(
   D.parse(
@@ -26,14 +28,10 @@ export const HexDigit: C.Codec<number> = C.make(
     encode: match([_(0), constant('00')], [Number, base16]),
   }
 )
-export const RGB = D.type({
-  r: EightBit,
-  g: EightBit,
-  b: EightBit,
-})
-export const rgb: Builder<RGB> = (r, g, b) => RGB.decode({r, g, b})
+export const RGB = D.tuple(EightBit, EightBit, EightBit)
+export const rgb: Builder<RGB> = (...args: RGB) => RGB.decode(args)
 export type RGB = D.TypeOf<typeof RGB>
-export const RGBFromHex: C.Codec<RGB> = C.make(
+export const RGBFromHex = C.make<RGB>(
   D.parse(D.string, s =>
     pipe(
       s.replace(/^#/, '').split('').reverse(),
@@ -55,11 +53,11 @@ export const RGBFromHex: C.Codec<RGB> = C.make(
       array.sequence(either),
       E.bimap(
         constant('Failed to parse hex digit'),
-        flow(A.reverse, ([r, g, b]) => ({r, g, b}))
+        flow(A.reverse, ([r, g, b]) => [r, g, b])
       )
     )
   ),
   {
-    encode: ({r, g, b}) => '#' + [r, g, b].map(HexDigit.encode).join(''),
+    encode: rgb => '#' + rgb.map(HexDigit.encode).join(''),
   }
 )

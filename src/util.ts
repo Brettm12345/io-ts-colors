@@ -5,11 +5,10 @@ import {
   flow,
   FunctionN as FN,
 } from 'fp-ts/lib/function'
+import {fold, monoidSum} from 'fp-ts/lib/Monoid'
 import * as O from 'fp-ts/lib/Option'
 import {pipe} from 'fp-ts/lib/pipeable'
-import {semigroupSum} from 'fp-ts/lib/Semigroup'
 import {Decoder} from './global'
-import {fold, monoidSum} from 'fp-ts/lib/Monoid'
 
 const {round, max} = Math
 
@@ -44,6 +43,7 @@ export const roundTo: NumFn = flow(maybe(0), multiply(10), oneWhenZero, x =>
 
 export const between0and1: Endo<number> = flow(Math.abs, x => x - round(x))
 export const percent: Endo<number> = flow(multiply(100), roundTo(1))
+export const indexFrom = <A>(xs: A[]) => (x: A) => xs.indexOf(x)
 
 /**
  * Return the element `n` slots away from the maximum value in the array.
