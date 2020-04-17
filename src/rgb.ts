@@ -7,7 +7,7 @@ import {pipe} from 'fp-ts/lib/pipeable'
 import * as C from 'io-ts/lib/Codec'
 import * as D from 'io-ts/lib/Decoder'
 import {Literal, match, Number} from 'runtypes'
-import {EightBit, NonEmptyString, IntFromString, showError} from './io'
+import {EightBit, IntFromString, NonEmptyString, showError} from './io'
 import {base16, Builder, replaceAll, sum} from './util'
 
 const HexZero = constant('00')

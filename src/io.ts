@@ -25,7 +25,7 @@ export const Positive = D.refinement(
   (n): n is Positive => n >= 0,
   'Positive'
 )
-const isPositive = flow(Positive.decode, E.isRight)
+export const isPositive = flow(Positive.decode, E.isRight)
 
 interface DecimalBrand {
   readonly Decimal: unique symbol
