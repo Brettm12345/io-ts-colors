@@ -2,18 +2,15 @@ import * as A from 'fp-ts/lib/Array'
 import {array} from 'fp-ts/lib/Array'
 import * as E from 'fp-ts/lib/Either'
 import {either} from 'fp-ts/lib/Either'
-import {constant, flow, unsafeCoerce} from 'fp-ts/lib/function'
-import {monoidSum} from 'fp-ts/lib/Monoid'
+import {constant, flow} from 'fp-ts/lib/function'
 import {pipe} from 'fp-ts/lib/pipeable'
-import {fold} from 'fp-ts/lib/Semigroup'
 import * as C from 'io-ts/lib/Codec'
 import * as D from 'io-ts/lib/Decoder'
 import {Literal as _, match, Number} from 'runtypes'
-import {IntFromString} from './numbers'
-import {EightBit, NonEmptyString} from './units'
-import {Builder, base16, replaceAll, sum} from './util'
+import {EightBit, NonEmptyString, IntFromString} from './io'
+import {base16, Builder, replaceAll, sum} from './util'
 
-export const HexDigit: C.Codec<number> = C.make(
+export const HexDigit = C.make<number>(
   D.parse(
     NonEmptyString,
     flow(

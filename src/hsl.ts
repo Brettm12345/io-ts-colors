@@ -13,10 +13,8 @@ import {
   EightBitFromDecimal,
   Percentage,
   PercentFromNumber,
-} from './units'
+} from './io'
 import {avg, Builder, deltaMax, indexFrom} from './util'
-
-const {round} = Math
 
 const HSL = D.tuple(Degree, Percentage, Percentage)
 export type HSL = D.TypeOf<typeof HSL>
