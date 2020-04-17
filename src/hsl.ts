@@ -1,11 +1,10 @@
 import {Do} from 'fp-ts-contrib/lib/Do'
 import * as E from 'fp-ts/lib/Either'
 import {either} from 'fp-ts/lib/Either'
-import {constant, flow, unsafeCoerce} from 'fp-ts/lib/function'
+import {flow, unsafeCoerce} from 'fp-ts/lib/function'
 import {pipe} from 'fp-ts/lib/pipeable'
 import * as C from 'io-ts/lib/Codec'
 import * as D from 'io-ts/lib/Decoder'
-import {RGB} from './rgb'
 import {
   Decimal,
   Degree,
@@ -15,6 +14,7 @@ import {
   PercentFromNumber,
   showError,
 } from './io'
+import {RGB} from './rgb'
 import {avg, Builder, deltaMax, indexFrom} from './util'
 
 const HSL = D.tuple(Degree, Percentage, Percentage)
