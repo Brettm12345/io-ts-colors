@@ -9,6 +9,7 @@ import * as O from 'fp-ts/lib/Option'
 import {pipe} from 'fp-ts/lib/pipeable'
 import {semigroupSum} from 'fp-ts/lib/Semigroup'
 import {Decoder} from './global'
+import {fold, monoidSum} from 'fp-ts/lib/Monoid'
 
 const {round, max} = Math
 
@@ -28,10 +29,11 @@ export const multiply: NumFn = x => y => y * x
 export const add: NumFn = x => y => y + x
 export const sub: NumFn = x => y => y - x
 export const mod: NumFn = x => y => y % x
-export const sum = A.reduce(0, semigroupSum.concat)
 export const avg = (...xs: number[]) => pipe(xs, sum, div(xs.length))
 export const oneWhenZero: Endo<number> = x => (x === 0 ? 1 : x)
 export const indexed = <A>(xs: A[]) => xs.map((x, i) => [i, x])
+export const base16 = (x: number): string => x.toString(16)
+export const sum = fold(monoidSum)
 
 export const isBetween = (min: number, max: number) => (x: number) =>
   min >= x && x <= max

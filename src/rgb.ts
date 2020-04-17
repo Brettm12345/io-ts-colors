@@ -3,17 +3,13 @@ import {array} from 'fp-ts/lib/Array'
 import * as E from 'fp-ts/lib/Either'
 import {either} from 'fp-ts/lib/Either'
 import {constant, flow} from 'fp-ts/lib/function'
-import {monoidString, monoidSum} from 'fp-ts/lib/Monoid'
 import {pipe} from 'fp-ts/lib/pipeable'
-import {fold} from 'fp-ts/lib/Semigroup'
 import * as C from 'io-ts/lib/Codec'
 import * as D from 'io-ts/lib/Decoder'
 import {Literal as _, match, Number} from 'runtypes'
 import {IntFromString} from './numbers'
 import {EightBit, NonEmptyString} from './units'
-import {Builder, replaceAll} from './util'
-
-const base16 = (x: number): string => x.toString(16)
+import {base16, Builder, replaceAll, sum} from './util'
 
 export const HexDigit: C.Codec<number> = C.make(
   D.parse(
@@ -27,9 +23,7 @@ export const HexDigit: C.Codec<number> = C.make(
     )
   ),
   {
-    encode: match([_(0), constant('00')], [Number, base16]) as (
-      x: number
-    ) => string,
+    encode: match([_(0), constant('00')], [Number, base16]),
   }
 )
 export const RGB = D.type({
@@ -54,7 +48,8 @@ export const RGBFromHex: C.Codec<RGB> = C.make(
             )
           ),
           array.sequence(either),
-          E.chain(flow(x => fold(monoidSum)(0, x), EightBit.decode))
+          E.map(sum),
+          E.chain(EightBit.decode)
         )
       ),
       array.sequence(either),
@@ -65,11 +60,6 @@ export const RGBFromHex: C.Codec<RGB> = C.make(
     )
   ),
   {
-    encode: ({r, g, b}) =>
-      '#' +
-      pipe(
-        [r, g, b],
-        A.foldMap(monoidString)(flow(HexDigit.encode, x => x as string))
-      ),
+    encode: ({r, g, b}) => '#' + [r, g, b].map(HexDigit.encode).join(''),
   }
 )
