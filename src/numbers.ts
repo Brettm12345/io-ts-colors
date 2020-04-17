@@ -1,4 +1,17 @@
+import * as C from 'io-ts/lib/Codec'
 import * as D from 'io-ts/lib/Decoder'
+import * as E from 'fp-ts/lib/Either'
+import {not, constant, flow} from 'fp-ts/lib/function'
+
+interface NonEmptyStringBrand {
+  readonly NonEmpty: unique symbol
+}
+export type NonEmptyString = string & NonEmptyStringBrand
+export const NonEmptyString = D.refinement(
+  D.string,
+  (s): s is NonEmptyString => s.trim() !== '',
+  'NonEmpty'
+)
 
 interface EightBitBrand {
   readonly EightBit: unique symbol
@@ -30,13 +43,13 @@ export const Degree = D.refinement(
   'Degree'
 )
 
-interface NonEmptyStringBrand {
-  readonly NonEmpty: unique symbol
-}
-
-export type NonEmptyString = string & NonEmptyStringBrand
-export const NonEmptyString = D.refinement(
-  D.string,
-  (s): s is NonEmptyString => s.trim() !== '',
-  'NonEmpty'
+export const IntFromString = C.make(
+  D.parse(
+    NonEmptyString,
+    flow(
+      parseInt,
+      E.fromPredicate(not(isNaN), constant('Failed to parse int from string'))
+    )
+  ),
+  {encode: String}
 )

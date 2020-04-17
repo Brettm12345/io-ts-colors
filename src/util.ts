@@ -1,5 +1,4 @@
 import * as A from 'fp-ts/lib/Array'
-import {Either} from 'fp-ts/lib/Either'
 import {
   constant,
   Endomorphism as Endo,
@@ -9,12 +8,12 @@ import {
 import * as O from 'fp-ts/lib/Option'
 import {pipe} from 'fp-ts/lib/pipeable'
 import {semigroupSum} from 'fp-ts/lib/Semigroup'
-import * as t from 'io-ts'
+import {Decoder} from './global'
 
 const {round, max} = Math
 
-export type Parsed<T> = Either<t.Errors, T>
-export type Decoder<T> = FN<unknown[], Parsed<T>>
+export type Decoded<T> = ReturnType<Decoder<T>['decode']>
+export type Builder<T> = FN<number[], Decoded<T>>
 type Search = string | RegExp
 type Replacement = [Search, string]
 type NumFn = (x: number) => Endo<number>
