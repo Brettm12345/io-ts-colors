@@ -14,34 +14,63 @@ export const NonEmptyString = D.refinement(
   'NonEmpty'
 )
 
+interface PositiveBrand {
+  readonly Positive: unique symbol
+}
+export type Positive = number & PositiveBrand
+export const Positive = D.refinement(
+  D.number,
+  (n): n is Positive => n >= 0,
+  'Positive'
+)
+const isPositive = flow(Positive.decode, E.isRight)
+
+interface DecimalBrand {
+  readonly Decimal: unique symbol
+}
+export type Decimal = number & DecimalBrand & PositiveBrand
+export const Decimal = D.refinement(
+  D.number,
+  (n): n is Decimal => isPositive && n <= 1,
+  'Decimal'
+)
+
 interface EightBitBrand {
   readonly EightBit: unique symbol
 }
 export type EightBit = number & EightBitBrand
 export const EightBit = D.refinement(
-  D.number,
-  (n): n is EightBit => n >= 0 && n <= 255,
+  Positive,
+  (n): n is EightBit & Positive => isPositive(n) && n <= 255,
   'EightBit'
 )
-
+export const EightBitFromDecimal = C.make<EightBit>(
+  D.parse(
+    Decimal,
+    flow(multiply(255), EightBit.decode, E.mapLeft(constant('err')))
+  ),
+  {encode: div(255)}
+)
 interface PercentageBrand {
   readonly Percentage: unique symbol
 }
-export type Percentage = number & PercentageBrand
+export type Percentage = number & PercentageBrand & Positive
 export const Percentage = D.refinement(
-  D.number,
-  (n): n is Percentage => n >= 0 && n <= 100,
+  Positive,
+  (n): n is Percentage => n <= 100,
   'Percentage'
 )
-
-interface DegreeBrand {
-  readonly Degree: unique symbol
-}
-export type Degree = number & DegreeBrand
-export const Degree = D.refinement(
-  D.number,
-  (n): n is Degree => n >= 0 && n <= 360,
-  'Degree'
+export const PercentFromNumber = C.make<Percentage>(
+  D.parse(
+    Positive,
+    flow(
+      multiply(100),
+      roundTo(1),
+      Percentage.decode,
+      E.mapLeft(JSON.stringify)
+    )
+  ),
+  {encode: div(100)}
 )
 
 export const IntFromString = C.make(
@@ -55,50 +84,18 @@ export const IntFromString = C.make(
   {encode: String}
 )
 
-interface DecimalBrand {
-  readonly Decimal: unique symbol
-}
-export type Decimal = number & DecimalBrand
-export const Decimal = D.refinement(
-  D.number,
-  (n): n is Decimal => n >= 0 && n <= 1,
-  'Decimal'
-)
-
-interface EightBitBrand {
-  readonly EightBit: unique symbol
-}
-
-export const EightBitFromDecimal = C.make<EightBit>(
-  D.parse(
-    Decimal,
-    flow(multiply(255), EightBit.decode, E.mapLeft(constant('err')))
-  ),
-  {encode: div(255)}
-)
-
-interface PercentageBrand {
-  readonly Percentage: unique symbol
-}
-export const PercentFromNumber = C.make<Percentage>(
-  D.parse(
-    D.number,
-    flow(
-      multiply(100),
-      roundTo(1),
-      Percentage.decode,
-      E.mapLeft(JSON.stringify)
-    )
-  ),
-  {encode: div(100)}
-)
-
 interface DegreeBrand {
   readonly Degree: unique symbol
 }
+export type Degree = number & DegreeBrand & PositiveBrand
+export const Degree = D.refinement(
+  Positive,
+  (n): n is Degree => isPositive(n) && n <= 360,
+  'Degree'
+)
 export const DegreeFromNumber = C.make<Degree>(
   D.parse(
-    D.number,
+    Positive,
     flow(
       multiply(60),
       mod(360),
