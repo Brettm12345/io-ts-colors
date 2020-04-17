@@ -6,9 +6,11 @@ import {constant, flow} from 'fp-ts/lib/function'
 import {pipe} from 'fp-ts/lib/pipeable'
 import * as C from 'io-ts/lib/Codec'
 import * as D from 'io-ts/lib/Decoder'
-import {Literal as _, match, Number} from 'runtypes'
+import {Literal, match, Number} from 'runtypes'
 import {EightBit, NonEmptyString, IntFromString, showError} from './io'
 import {base16, Builder, replaceAll, sum} from './util'
+
+const HexZero = constant('00')
 
 export const HexDigit = C.make<number>(
   D.parse(
@@ -21,9 +23,7 @@ export const HexDigit = C.make<number>(
       showError
     )
   ),
-  {
-    encode: match([_(0), constant('00')], [Number, base16]),
-  }
+  {encode: match([Literal(0), HexZero], [Number, base16])}
 )
 export const RGB = D.tuple(EightBit, EightBit, EightBit)
 export const rgb: Builder<RGB> = (...args: RGB) => RGB.decode(args)
@@ -39,7 +39,7 @@ export const RGBFromHex = C.make<RGB>(
           A.mapWithIndex((i, a) =>
             pipe(
               HexDigit.decode(a),
-              E.map(x => (i <= 0 ? x : x * (i * 16)))
+              E.map(x => (i > 0 ? x * (i * 16) : x))
             )
           ),
           array.sequence(either),
