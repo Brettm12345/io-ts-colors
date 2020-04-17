@@ -47,10 +47,7 @@ export const EightBit = D.refinement(
   'EightBit'
 )
 export const EightBitFromDecimal = C.make<EightBit>(
-  D.parse(
-    Decimal,
-    flow(multiply(255), EightBit.decode, E.mapLeft(constant('err')))
-  ),
+  D.parse(Decimal, flow(multiply(255), EightBit.decode, showError)),
   {encode: div(255)}
 )
 interface PercentageBrand {
@@ -73,10 +70,7 @@ export const PercentFromNumber = C.make<Percentage>(
 export const IntFromString = C.make(
   D.parse(
     NonEmptyString,
-    flow(
-      parseInt,
-      E.fromPredicate(not(isNaN), constant('Failed to parse int from string'))
-    )
+    flow(parseInt, E.fromPredicate(not(isNaN), constant('Error: Not a number')))
   ),
   {encode: String}
 )
