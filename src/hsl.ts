@@ -1,7 +1,7 @@
 import {Do} from 'fp-ts-contrib/lib/Do'
 import * as E from 'fp-ts/lib/Either'
 import {either} from 'fp-ts/lib/Either'
-import {flow, unsafeCoerce} from 'fp-ts/lib/function'
+import {flow, unsafeCoerce, untupled} from 'fp-ts/lib/function'
 import {pipe} from 'fp-ts/lib/pipeable'
 import * as C from 'io-ts/lib/Codec'
 import * as D from 'io-ts/lib/Decoder'
@@ -19,7 +19,7 @@ import {avg, Builder, deltaMax, indexFrom} from './util'
 
 const HSL = D.tuple(Degree, Percentage, Percentage)
 export type HSL = D.TypeOf<typeof HSL>
-export const hsl: Builder<HSL> = (...args) => HSL.decode(args)
+export const hsl: Builder<HSL> = untupled(HSL.decode)
 export const HSLFromRGB = C.make<HSL>(
   D.parse(
     RGB,

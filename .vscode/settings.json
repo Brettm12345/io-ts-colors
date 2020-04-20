@@ -2,7 +2,12 @@
   "cSpell.words": [
     "Endo",
     "HSLA",
-    "runtypes"
+    "bimap",
+    "grayscale",
+    "monoid",
+    "pipeable",
+    "runtypes",
+    "untupled"
   ],
   "jest.autoEnable": false,
   "editor.semanticHighlighting.enabled": true,
