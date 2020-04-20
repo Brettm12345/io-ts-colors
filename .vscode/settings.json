@@ -3,6 +3,7 @@
     "Endo",
     "HSLA",
     "bimap",
+    "grayscale",
     "monoid",
     "pipeable",
     "runtypes",

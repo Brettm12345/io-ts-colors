@@ -38,7 +38,8 @@ export const RGBFromHex = C.make<RGB>(
         flow(
           A.mapWithIndex((i, a) =>
             pipe(
-              HexDigit.decode(a),
+              a,
+              HexDigit.decode,
               E.map(x => (i > 0 ? x * (i * 16) : x))
             )
           ),
