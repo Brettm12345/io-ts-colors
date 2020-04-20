@@ -19,7 +19,7 @@ import {avg, Builder, deltaMax, indexFrom} from './util'
 
 const HSL = D.tuple(Degree, Percentage, Percentage)
 export type HSL = D.TypeOf<typeof HSL>
-export const hsl: Builder<HSL> = (...args: HSL) => HSL.decode(args)
+export const hsl: Builder<HSL> = (...args) => HSL.decode(args)
 export const HSLFromRGB = C.make<HSL>(
   D.parse(
     RGB,
@@ -39,17 +39,16 @@ export const HSLFromRGB = C.make<HSL>(
         .bind('deltaEightBit', EightBitFromDecimal.decode(delta))
         .bindL('h', ({maxIndex, deltaEightBit}) =>
           pipe(
-            DegreeFromNumber.decode(
-              2 * maxIndex + (d(1) - d(2)) / deltaEightBit
-            )
+            2 * maxIndex + (d(1) - d(2)) / deltaEightBit,
+            DegreeFromNumber.decode
           )
         )
-        .bind('l', PercentFromNumber.decode(avg(max, min)))
+        .bind('l', pipe(avg(max, min), PercentFromNumber.decode))
         .bindL('s', ({l}) =>
-          PercentFromNumber.decode(delta / (l > 50 ? 2 - delta : sum))
+          pipe(delta / (l > 50 ? 2 - delta : sum), PercentFromNumber.decode)
         )
         .return(({h, s, l}): HSL => [h, s, l])
     }, showError)
   ),
-  {encode: unsafeCoerce} // TODO
+  {encode: unsafeCoerce} // TODO: RGB -> HSL
 )
