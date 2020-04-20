@@ -2,7 +2,7 @@ import * as A from 'fp-ts/lib/Array'
 import {array} from 'fp-ts/lib/Array'
 import * as E from 'fp-ts/lib/Either'
 import {either} from 'fp-ts/lib/Either'
-import {constant, flow} from 'fp-ts/lib/function'
+import {constant, flow, untupled} from 'fp-ts/lib/function'
 import {pipe} from 'fp-ts/lib/pipeable'
 import * as C from 'io-ts/lib/Codec'
 import * as D from 'io-ts/lib/Decoder'
@@ -26,7 +26,7 @@ export const HexDigit = C.make<number>(
   {encode: match([Literal(0), HexZero], [Number, base16])}
 )
 export const RGB = D.tuple(EightBit, EightBit, EightBit)
-export const rgb: Builder<RGB> = (...args: RGB) => RGB.decode(args)
+export const rgb: Builder<RGB> = untupled(RGB.decode)
 export type RGB = D.TypeOf<typeof RGB>
 export const RGBFromHex = C.make<RGB>(
   D.parse(D.string, s =>
