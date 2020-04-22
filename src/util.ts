@@ -1,4 +1,5 @@
 import * as A from 'fp-ts/lib/Array'
+import * as E from 'fp-ts/lib/Either'
 import {
   constant,
   Endomorphism as Endo,
@@ -8,9 +9,7 @@ import {
 import {fold, monoidSum} from 'fp-ts/lib/Monoid'
 import * as O from 'fp-ts/lib/Option'
 import {pipe} from 'fp-ts/lib/pipeable'
-import {Decoder} from './global'
-
-const {round, max} = Math
+import {Decoder} from 'io-ts/lib/Decoder'
 
 export type Decoded<T> = ReturnType<Decoder<T>['decode']>
 export type Builder<T> = FN<number[], Decoded<T>>
@@ -38,10 +37,10 @@ export const isBetween = (min: number, max: number) => (x: number) =>
   min >= x && x <= max
 
 export const roundTo: NumFn = flow(maybe(0), multiply(10), oneWhenZero, x =>
-  flow(multiply(x), round, div(x))
+  flow(multiply(x), Math.round, div(x))
 )
 
-export const between0and1: Endo<number> = flow(Math.abs, x => x - round(x))
+export const between0and1: Endo<number> = flow(Math.abs, x => x - roundTo(0)(x))
 export const percent: Endo<number> = flow(multiply(100), roundTo(1))
 export const indexFrom = <A>(xs: A[]) => (x: A) => xs.indexOf(x)
 
@@ -50,10 +49,12 @@ export const indexFrom = <A>(xs: A[]) => (x: A) => xs.indexOf(x)
  * Cycling back to the first value after reaching the end.
  */
 export const deltaMax = (xs: number[]) => (n: number): number =>
-  xs[(xs.indexOf(max(...xs)) + n) % xs.length]
+  xs[(xs.indexOf(Math.max(...xs)) + n) % xs.length]
 
 export const replaceAll = (xs: Replacement[]): Endo<string> => x =>
   pipe(
     xs,
     A.reduce(x, (b, a) => b.replace(...a))
   )
+
+export const showError = E.mapLeft(JSON.stringify)

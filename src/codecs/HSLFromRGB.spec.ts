@@ -1,7 +1,7 @@
-import {RGB, rgb} from './rgb'
-import {HSLFromRGB, hsl, HSL} from './hsl'
 import {either} from 'fp-ts/lib/Either'
-import {Decoded} from './util'
+import {HSL, hsl, RGB, rgb} from '../types'
+import {Decoded} from '../util'
+import {HSLFromRGB} from './HSLFromRGB'
 ;[
   [rgb(255, 0, 0), hsl(0, 100, 50)],
   [rgb(25, 26, 42), hsl(236, 25.4, 13.1)],

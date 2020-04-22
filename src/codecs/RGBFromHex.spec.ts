@@ -1,6 +1,7 @@
 import {either, right} from 'fp-ts/lib/Either'
-import {RGBFromHex, rgb, RGB} from './rgb'
-import {Decoded} from './util'
+import {rgb, RGB} from '../types'
+import {RGBFromHex} from './RGBFromHex'
+import {Decoded} from '../util'
 ;[
   ['#ff0000', rgb(255, 0, 0)],
   ['#191a2a', rgb(25, 26, 42)],
