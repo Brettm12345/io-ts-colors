@@ -1,5 +1,12 @@
 {
-  "cSpell.words": ["Endo", "HSLA", "bimap", "runtypes"],
+  "cSpell.words": [
+    "Endo",
+    "HSLA",
+    "bimap",
+    "mult",
+    "runtypes",
+    "tsdx"
+  ],
   "jest.autoEnable": false,
   "editor.semanticHighlighting.enabled": true,
   "jestTestExplorer.pathToJest": "yarn test",

@@ -1,5 +1,4 @@
-import * as E from 'fp-ts/lib/Either'
-import {flow} from 'fp-ts/lib/function'
+import {Show, showNumber} from 'fp-ts/lib/Show'
 import * as D from 'io-ts/lib/Decoder'
 
 export interface PositiveBrand {
@@ -11,4 +10,4 @@ export const Positive = D.refinement(
   (n): n is Positive => n >= 0,
   'Positive'
 )
-export const isPositive = flow(Positive.decode, E.isRight)
+export const showPositive: Show<Positive> = showNumber

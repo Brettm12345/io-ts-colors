@@ -1,5 +1,6 @@
-import * as D from 'io-ts/lib/Decoder'
 import {range} from 'fp-ts/lib/Array'
+import {Show, showString} from 'fp-ts/lib/Show'
+import * as D from 'io-ts/lib/Decoder'
 
 export interface HexDigitBrand {
   readonly HexDigit: unique symbol
@@ -14,3 +15,4 @@ export const HexDigit = D.refinement(
       .includes(n),
   'HexDigit'
 )
+export const showHexDigit: Show<HexDigit> = showString

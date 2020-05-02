@@ -1,15 +1,15 @@
 import {Do} from 'fp-ts-contrib/lib/Do'
 import * as E from 'fp-ts/lib/Either'
 import {either} from 'fp-ts/lib/Either'
-import {unsafeCoerce, flow} from 'fp-ts/lib/function'
+import {flow, unsafeCoerce} from 'fp-ts/lib/function'
 import {pipe} from 'fp-ts/lib/pipeable'
 import * as C from 'io-ts/lib/Codec'
 import * as D from 'io-ts/lib/Decoder'
+import {avg, deltaMax, formatError, indexFrom} from '../lib'
 import {Decimal, HSL, hsl, RGB} from '../types'
-import {avg, deltaMax, indexFrom, showError} from '../util'
 import {DegreeFromInt} from './DegreeFromInt'
 import {EightBitFromInt} from './EightBitFromInt'
-import {PercentFromInt} from './PercentageFromInt'
+import {PercentageFromDecimal} from './PercentageFromDecimal'
 
 export const HSLFromRGB = C.make<HSL>(
   D.parse(
@@ -34,12 +34,12 @@ export const HSLFromRGB = C.make<HSL>(
             DegreeFromInt.decode
           )
         )
-        .bind('l', pipe(avg(max, min), PercentFromInt.decode))
+        .bind('l', pipe(avg(max, min), PercentageFromDecimal.decode))
         .bindL('s', ({l}) =>
-          pipe(delta / (l > 50 ? 2 - delta : sum), PercentFromInt.decode)
+          pipe(delta / (l > 50 ? 2 - delta : sum), PercentageFromDecimal.decode)
         )
         .return(({h, s, l}): HSL => [h, s, l])
-    }, showError)
+    }, formatError)
   ),
   {encode: unsafeCoerce} // TODO: RGB -> HSL
 )

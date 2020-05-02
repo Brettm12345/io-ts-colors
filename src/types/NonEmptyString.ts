@@ -1,3 +1,4 @@
+import {Show, showString} from 'fp-ts/lib/Show'
 import * as D from 'io-ts/lib/Decoder'
 
 interface NonEmptyStringBrand {
@@ -9,3 +10,4 @@ export const NonEmptyString = D.refinement(
   (s): s is NonEmptyString => s.trim() !== '',
   'NonEmpty'
 )
+export const showNonEmptyString: Show<NonEmptyString> = showString

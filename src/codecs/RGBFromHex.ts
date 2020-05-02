@@ -6,8 +6,8 @@ import {flow} from 'fp-ts/lib/function'
 import {pipe} from 'fp-ts/lib/pipeable'
 import * as C from 'io-ts/lib/Codec'
 import * as D from 'io-ts/lib/Decoder'
+import {sum} from '../lib'
 import {EightBit, RGB} from '../types'
-import {sum} from '../util'
 import {IntFromHexDigit} from './IntFromHexDigit'
 
 export const RGBFromHex = C.make<RGB>(

@@ -1,12 +1,14 @@
+import {Show} from 'fp-ts/lib/Show'
 import * as D from 'io-ts/lib/Decoder'
-import {isPositive, Positive} from './Positive'
+import {Positive, showPositive} from './Positive'
 
 interface EightBitBrand {
   readonly EightBit: unique symbol
 }
-export type EightBit = number & EightBitBrand
+export type EightBit = Positive & EightBitBrand
 export const EightBit = D.refinement(
   Positive,
-  (n): n is EightBit & Positive => isPositive(n) && n <= 255,
+  (n): n is EightBit => n <= 255,
   'EightBit'
 )
+export const showEightBit: Show<EightBit> = showPositive

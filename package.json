@@ -6,6 +6,23 @@
   "repository": "https://github.com/brettm12345/io-ts-colors",
   "author": "brettm12345 <brettmandler@gmail.com>",
   "license": "MIT",
+  "jest": {
+    "coveragePathIgnorePatterns": ["/lib/", "index.ts"],
+    "coverageThreshold": {
+      "global": {
+        "branches": 50,
+        "functions": 50,
+        "lines": 50,
+        "statements": 50
+      },
+      "./src/codecs": {
+        "branches": 75,
+        "functions": 100,
+        "lines": 100,
+        "statements": 100
+      }
+    }
+  },
   "scripts": {
     "test": "tsdx test",
     "test:watch": "yarn test --watch",
